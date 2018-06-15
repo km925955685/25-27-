@@ -1,0 +1,272 @@
+ <!DOCTYPE html>
+<html>
+<head>
+    
+</head>
+<body>
+        <select id="year-select">
+                <option value="2000">2000</option>
+                <option value="2001">2001</option>
+                <option value="2002">2002</option>
+                ……
+                <option value="2032">2002</option>
+            </select>
+            
+            <select id="month-select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                ……
+                <option value="12">12</option>
+            </select>
+            
+            <select id="day-select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                ……
+                <option value="31">31</option>
+            </select>
+            
+            <select id="hour-select">
+                <option value="0">00</option>
+                <option value="1">01</option>        
+                ……
+                <option value="23">23</option>
+            </select>
+            
+            <select id="minite-select">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                ……
+                <option>59</option>
+            </select>
+            
+            <select id="second-select">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                ……
+                <option>59</option>
+            </select>
+            
+            <p id="result-wrapper">现在距离 2001年1月1日星期X HH:MM:SS 还有 X 天 X 小时 X 分 X 秒</p>
+
+            <script>
+            var selyear,selmonth,selday,selhour,selminite,selsecond,number,now,year,month,day,date,hours,minutes,seconds,leaps,leapnumber,numberday,calday,secondsS,secondsN,distanceDay,distanceHour,distanceMonth,distanceSecond
+
+            var result =document.getElementById("result-wrapper")
+                function select(id) {
+                    var  myselect=document.getElementById(id);
+                    var index=myselect.selectedIndex
+                    number =myselect.options[index].value;    
+                    //console.log(number)   
+                }//用于从特定id获取值
+
+                function get(){
+                    select("year-select");
+                    selyear  = number
+                    select("month-select")
+                    selmonth = number
+                    select("day-select")
+                    selday = number
+                    select("hour-select")
+                    selhour = number
+                    select("minite-select")
+                    selminite = number
+                    select("second-select")
+                    selsecond = number
+                }//用于同时获取所有选中项的值
+            
+                function gettime(){
+                now =new Date();
+                year =now.getFullYear();//哪一年
+                month =now.getMonth()+1;//哪一月.0-11计数,因此真实月份得加一
+                day =now.getDay();//获取了周几.0-6计数,真实周几得加一,,出现bug计数貌似是正常的
+                date =now.getDate();//那一天(几号)
+                hours = now.getHours();//几点
+                minutes = now.getMinutes();
+                seconds = now.getSeconds();}
+
+                
+                function leap(years){
+                    //console.log("hi")
+                    if (years%4 !=0) {
+                    leaps = 0
+                    }	
+                    else if (years%100 != 0) {
+                    leaps = 1
+                    }
+                    else if (years%400 != 0) {
+                    leaps = 0
+                    }
+                    else if (years%3200 != 0) {
+                    leaps = 0
+                    }
+                    else {
+                    leaps = 1
+                    }
+                    //console.log("leap"+leaps)
+                }//判断平年还是闰年*/
+
+                function pleapnumber(){
+                    leapnumber=0
+                    //console.log(selyear+"hi")
+                    var x = Number(selyear) + 1//这里也曾经出现了一次鬼畜的bug.value获取的数字被默认视为字符串了.
+                    for(var i=x;i<year;++i){
+                        leap(i);    
+                        leapnumber+= leaps
+                    }
+                    for(var i=selyear+1;i<selyear;++i){
+                        leap(i);
+                        leapnumber+= leaps
+                    }
+                }//计算过去的平闰年数(不包含选中那年,也不包含现在这年)
+                
+                function fleapnumber(){
+                    leapnumber=0
+                    for(var i=year+1;i<selyear;++i){
+                        leap(i);
+                        leapnumber+= leaps
+                    }
+                    
+                }//计算未来的平闰年数(不包含选中那年,也不包含现在这年)
+
+                function CalculationDay(a,b,c){
+                    leap(a);
+                    var month2 =b -1 
+                    
+                    var numberday5 =month2 * 31 //先把每月当做31天算
+                    if(month2 <2){
+                        numberday5 =numberday5 
+                    }
+                    else if(month2 > 1 && month2 <4 ){
+                        consol.log("3yuebing")
+                        numberday5-=3;
+                        numberday5-=leaps
+                    }
+                    else if(month2<6){
+                        numberday5-=4
+                        
+                    }
+                    else if(month2<9){
+                        numberday5-=5;
+                        numberday5-=leaps; 
+                    }
+                    else if(month2<11){
+                        numberday5-=6;
+                        numberday5-=leaps;
+                    }
+                    else if(month2<13){
+                        numberday5-=7;
+                        numberday5-=leaps;
+                    }
+                    calday =Number(numberday5) + Number(c)
+                    
+                }//计算过去了几天
+
+                function pdaynumber(){
+                    pleapnumber();
+                    var numberyear = year-selyear-1;//夹在两年之间的年数
+                    var numberday1 = numberyear*365; //夹在两年之间的天数(未计算闰年)
+                    var numberday2 = numberday1+leapnumber; // //夹在两年之间的天数(计算闰年)
+                    CalculationDay(selyear,selmonth,selday)//选择那天是当年第几天
+                    var numberday3 = numberday2 +365 -calday
+                    CalculationDay(year,month,day)
+                    numberday = numberday2 +calday//至今有几天
+                }//至今有几天
+                
+                function fdaynumber(){
+                    fleapnumber();
+                    var numberyear = selyear-year-1;//夹在两年之间的年数
+                    var numberday1 = numberyear*365; //夹在两年之间的天数(未计算闰年)
+                    var numberday2 = numberday1+leapnumber; // //夹在两年之间的天数(计算闰年)
+                    CalculationDay(year,month,day)
+                    var numberday3 = numberday2 +365 -calday
+                    CalculationDay(selyear,selmonth,selday)
+                    numberday = numberday2 +calday
+                }//未来有几天
+                
+                function CalculationTime(){
+                    //console.log("hi")
+                    secondsS = Number(selhour)*3600 +Number(selminite)*60+Number(selsecond)//选择那年的第几秒
+                    secondsN = hours*3600 + minutes*60 + seconds//现在是今年的第几秒
+                    var calSecond =numberday*86400-365*86400+seconds+secondsN//之间有几秒
+                    distanceDay =Math.floor(calSecond / 86400)
+                    var remainsecond = calSecond % 86400
+                    distanceHour=Math.floor(remainsecond / 3600)
+                    remainsecond = remainsecond % 3600
+                    distanceMonth=Math.floor(remainsecond / 60)
+                    remainsecond = remainsecond % 60
+                    distanceSecond=remainsecond
+                }
+
+                function future(){
+                    fdaynumber()
+                    CalculationTime()
+                    result.innerHTML = "现在距离 "+selyear+"年"+selmonth+"月"+selday+"日 "+selhour+":"+selminite+":"+selsecond+" 还有 "+distanceDay+" 天 "+distanceHour+" 小时 "+distanceMonth+" 分 "+distanceSecond+" 秒"
+                }//选择时间为未来计算方法
+                
+                function past(){
+                    pdaynumber()
+                    CalculationTime()
+                    result.innerHTML = "现在距离 "+selyear+"年"+selmonth+"月"+selday+"日 "+selhour+":"+selminite+":"+selsecond+" 已经过去 "+distanceDay+" 天 "+distanceHour+" 小时 "+distanceMonth+" 分 "+distanceSecond+" 秒"
+                }//选择时间为过去计算方法
+                
+                function p(){
+                    if(selyear > year){future()}
+                    else if(selyear == year){
+                        if(selmonth > month){future()}
+                        else if(selday == date){
+                            if(selhour > hours){future()}
+                            else if(selhour == hours){
+                                if(selminite > minutes){future()}
+                                else if(elminite == minutes){
+                                    if(selsecond > seconds){future()}
+                                    else{past()}
+                                }
+                            }
+                        }
+                    }
+                    else{past()}
+                }//用于判断选择的时间早于还是晚于现在
+
+                get();
+                gettime();
+                p()
+                window.addEventListener("change",function(){    
+                    var ev =window.event;
+                    var target =ev.target;
+                    if(target.nodeName.toLocaleLowerCase() == "select"){
+                        get();
+                        gettime();
+                        if(selmonth == 4 ||selmonth ==6||selmonth == 9|| selmonth== 11){
+                            if(selday > 30){
+                            result.innerHTML =selmonth+"月只有30天"
+                            }
+                            else{
+                            p()
+                            }    
+                        }
+                        else if(selmonth == 2){
+                            leap(selyear);
+                            
+                            if(leaps == 0 && selday >28){
+                            result.innerHTML =selyear+"年"+selmonth+"月只有28天"
+                            }
+                            else if(leaps == 0 && selday >29){
+                            result.innerHTML =selyear+"年"+selmonth+"月只有29天"
+                            }
+                            else{
+                            p()
+                            }
+                        }
+                        else{
+                            p() 
+                        }
+                    }
+
+                })
+
+               
+            </script>
+    
+</body>
+</html>

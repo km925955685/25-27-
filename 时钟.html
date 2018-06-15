@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <p id="result"></p>
+        <p id="result2"></p>
+        <script>
+            var now,year,month,day,date,hours,minutes,seconds,nowweek,aop,weeks2
+            function gettime(){
+                now =new Date();
+                year =now.getFullYear();//哪一年
+                month =now.getMonth()+1;//哪一月.0-11计数,因此真实月份得加一
+                day =now.getDay();//获取了周几.0-6计数,真实周几得加一,,出现bug计数貌似是正常的
+                date =now.getDate();//那一天(几号)
+                hours = now.getHours();//几点
+                minutes = now.getMinutes();
+                seconds = now.getSeconds();}
+            
+            function add(){
+                if(month<10){
+                    month="0"+month
+                }
+                if(date<10){
+                    date ="0"+date
+                }
+                if(hours<10){
+                    hours="0"+hours
+                }
+                if(minutes<10){
+                    minutes="0"+minutes
+                }
+                if(seconds<10){
+                    seconds="0"+seconds
+                }
+            }
+            function week(day){
+                var weeks =["星期一","星期二","星期三","星期四","星期五","星期六","星期日"]
+                nowweek = weeks[day-1];
+               
+            }
+            function week2(day){
+                var weeks =["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+                nowweek2 = weeks[day-1];
+            }
+            function amorpm(){
+                if(hours<=12){
+                    aop = "AM"
+                }
+                else{
+                    aop="PM"
+                }
+            }
+
+            function time(){
+                gettime();
+                add();
+                week(day);
+                //console.log(year+" 年 "+month+" 月 "+date+" "+nowweek+" "+hours +":"+minutes+":"+seconds)
+                document.getElementById("result").innerHTML =year+" 年 "+month+" 月 "+date+" "+nowweek+" "+hours +":"+minutes+":"+seconds;
+            
+            
+            } 
+
+            function time2(){
+                gettime();
+                add();
+                week2(day);
+                amorpm();
+                //2008-10-10 Monday 07:10:30 PM
+                document.getElementById("result").innerHTML =year+"-"+month+"-"+date+" "+nowweek2+" "+hours +":"+minutes+":"+seconds+" "+aop   
+            }
+            //setInterval(time,1000)
+            //setInterval(time2,1000)
+
+            function mix(){
+                gettime();
+                add();
+                week(day);
+                week2(day);
+                amorpm();
+                document.getElementById("result").innerHTML =year+" 年 "+month+" 月 "+date+" "+nowweek+" "+hours +":"+minutes+":"+seconds
+                document.getElementById("result2").innerHTML =year+"-"+month+"-"+date+" "+nowweek2+" "+hours +":"+minutes+":"+seconds+" "+aop
+
+            }
+            setInterval(mix,1000)
+        
+        </script>
+    </body>
+
+</html>
